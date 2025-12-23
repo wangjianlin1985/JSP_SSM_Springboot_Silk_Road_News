@@ -1,0 +1,49 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ArticleMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加文章记录 -->
+	<insert id="addArticle" parameterType="article">
+		insert into t_article(title,articleClassObj,articlePhoto,content,author,comeFrom,addTime) values 
+		(#{title},#{articleClassObj.classId},#{articlePhoto},#{content},#{author},#{comeFrom},#{addTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询文章记录 -->
+	<select id="queryArticle" resultMap="articleMap" >
+		select t_article.* from t_article,t_articleClass ${where} and t_article.articleClassObj = t_articleClass.classId limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="articleMap" type="article">
+        <id property="articleId" column="articleId" />
+        <association property="articleClassObj" column="articleClassObj" select="com.chengxusheji.mapper.ArticleClassMapper.getArticleClass" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有文章记录 -->
+	<select id="queryArticleList" resultMap="articleMap" >
+		select t_article.* from t_article,t_articleClass ${where} and t_article.articleClassObj = t_articleClass.classId
+	</select>
+
+    <!-- 按照查询条件的文章记录数 -->
+	<select id="queryArticleCount" resultType="int">
+		select count(*) from t_article,t_articleClass ${where} and t_article.articleClassObj = t_articleClass.classId
+	</select>
+
+	<!-- 根据主键查询某个文章记录 -->
+	<select id="getArticle" parameterType="int" resultMap="articleMap">
+		select * from t_article where t_article.articleId = #{articleId}
+	</select>
+
+	<!-- 更新文章记录 -->
+	<update id="updateArticle" parameterType="article">
+		update t_article set title=#{title},articleClassObj=#{articleClassObj.classId},articlePhoto=#{articlePhoto},content=#{content},author=#{author},comeFrom=#{comeFrom},addTime=#{addTime} where articleId = #{articleId}
+	</update>
+
+	<!-- 删除文章记录 -->
+	<delete id="deleteArticle" parameterType="int">
+		delete from t_article where articleId=#{articleId}
+	</delete>
+
+</mapper>

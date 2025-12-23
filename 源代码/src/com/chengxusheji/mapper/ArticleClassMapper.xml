@@ -1,0 +1,48 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ArticleClassMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加文章分类记录 -->
+	<insert id="addArticleClass" parameterType="articleClass">
+		insert into t_articleClass(className,classDesc) values 
+		(#{className},#{classDesc})
+	</insert>
+
+	<!-- 按照查询条件分页查询文章分类记录 -->
+	<select id="queryArticleClass" resultMap="articleClassMap" >
+		select t_articleClass.* from t_articleClass ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="articleClassMap" type="articleClass">
+        <id property="classId" column="classId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有文章分类记录 -->
+	<select id="queryArticleClassList" resultMap="articleClassMap" >
+		select t_articleClass.* from t_articleClass ${where}
+	</select>
+
+    <!-- 按照查询条件的文章分类记录数 -->
+	<select id="queryArticleClassCount" resultType="int">
+		select count(*) from t_articleClass ${where}
+	</select>
+
+	<!-- 根据主键查询某个文章分类记录 -->
+	<select id="getArticleClass" parameterType="int" resultMap="articleClassMap">
+		select * from t_articleClass where t_articleClass.classId = #{classId}
+	</select>
+
+	<!-- 更新文章分类记录 -->
+	<update id="updateArticleClass" parameterType="articleClass">
+		update t_articleClass set className=#{className},classDesc=#{classDesc} where classId = #{classId}
+	</update>
+
+	<!-- 删除文章分类记录 -->
+	<delete id="deleteArticleClass" parameterType="int">
+		delete from t_articleClass where classId=#{classId}
+	</delete>
+
+</mapper>
